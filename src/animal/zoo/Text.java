@@ -9,7 +9,7 @@ public class Text {
         // 1.創建對象
         FileOutputStream fos = new FileOutputStream("src/animal/zoo/1.txt");
         // 2.寫入數據
-        fos.write("幹你娘".getBytes());
+        fos.write("wtf".getBytes());
         //換行
         fos.write("\r".getBytes());
         // 再寫一次數據
