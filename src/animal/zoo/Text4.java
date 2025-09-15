@@ -32,10 +32,11 @@ public class Text4 {
                 }
                 System.out.println("拷貝完畢");
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
+                // 如果有異常就會進入這個區域
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // 只要執行完try區域, 就會執行這個區域
+                // 簡單來說就是一定會執行這個區域
                 e.printStackTrace();
             }
         }
