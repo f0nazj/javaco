@@ -1,27 +1,47 @@
 package animal.zoo;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Text2 {
-    // 練習：
-        // 文件拷貝：
-        // 把mp4拷貝到當前模塊的src/animal/zoo/1.mp4
-
-    // 注意：
-        // 選擇一個比較小的文件, 不要太大, 否則會影響效率(他有另外的方法)
     public static void main(String[] args) throws IOException {
-        // 1.創建對象
-        FileInputStream fis = new FileInputStream("/Users/f0nazj/Downloads/Sequence 01_1.mp4");
-        FileOutputStream fos = new FileOutputStream("src/animal/zoo/1.mp4");
-        // 2.讀取數據
-        int data;
-        while((data = fis.read()) != -1){
-            fos.write(data);
+        File src = new File("/Users/f0nazj/Text");     // 資料來源
+        File dest = new File("/Users/f0nazj/TextTwo"); // 複製到這裡
+
+        copydir(src, dest);
+    }
+
+    /*
+     * 作用：拷貝文件夾
+     * 參數一：數據源
+     * 參數二：目的地
+     */
+    private static void copydir(File src, File dest) throws IOException {
+        // 1. 建立目的地資料夾（如果不存在）
+        dest.mkdirs();
+
+        // 2. 獲取來源目錄中的所有檔案/子資料夾
+        File[] files = src.listFiles();
+        if (files == null) return; // 避免空指標
+
+        // 3. 遍歷每一個項目
+        for (File file : files) {
+            if (file.isFile()) {
+                // 檔案：複製
+                try (FileInputStream fis = new FileInputStream(file);
+                    FileOutputStream fos = new FileOutputStream(new File(dest, file.getName()))) {
+                    byte[] bytes = new byte[1024];
+                    int len;
+                    while ((len = fis.read(bytes)) != -1) {
+                        fos.write(bytes, 0, len);
+                    }
+                }
+            } else{
+                // 資料夾：遞歸
+                copydir(file, new File(dest, file.getName()));
+            }
         }
-        // 3.釋放資源
-        fos.close();
-        fis.close();
     }
 }

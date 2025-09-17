@@ -1,5 +1,6 @@
 package ithemia.text;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,6 +24,10 @@ public class FileInPutStream {
                 // 細節2：讀到末尾了, read方法返回-1
             // 3.釋放資源
                 // 細節1：每次使用完流之後都要釋放資源
+
+        public FileInPutStream(File file) {
+        //TODO Auto-generated constructor stub
+    }
 
         public static void main(String[] args) throws FileNotFoundException, IOException {
         // public int read()               一次讀一個字節
@@ -61,4 +66,14 @@ public class FileInPutStream {
         fos.close();
         fis2.close();
     }
+
+        public int read(byte[] bytes) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'read'");
+        }
+
+        public void close() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'close'");
+        }
 }
