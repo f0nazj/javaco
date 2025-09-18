@@ -6,58 +6,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Text3 {
-    /*
-    * FileInPutStream一次讀多個字節
-    * 方法名稱。                        說明
-    * public int read()               一次讀一個字節
-    * public int read(byte[] buffer)  一次讀一個字節數組數據
-    */
-    public static void main(String[] args) throws Exception {
-            // 1.創建對象
-            // fis2 的數據檔案為mp4格式
-            FileInputStream fis2 = null;
-            FileOutputStream fos = null;
-            try {
-                fis2 = new FileInputStream("/Users/f0nazj/Downloads/Sequence 01_1.mp4");
-                // fos 為要拷貝的檔案位置
-                fos = new FileOutputStream("src/animal/zoo/1.mp4");
-                // 2.讀取數據
-                byte[] buffer = new byte[1024 * 1024 * 5];
-                // 一次讀取多個字節數據, 具體讀多少, 跟數組的長度有關
-                // 返回值：本次讀取到了多少個字節數據
-                int len;
-                // 讀取數據的時候, 會返回-1, 代表讀取完畢
-                while((len = fis2.read(buffer)) != -1){
-                    // 寫入數據
-                    // fos.write(buffer, 0, len);  // 寫入的數據長度是len
-                    // 0代表從數組的第0個位置開始寫入
-                    fos.write(buffer, 0, len);
-                }
-                System.out.println("拷貝完畢");
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }finally {
-                // 3.釋放資源
-                if(fos != null){
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                if(fis2 != null){
-                    try {
-                        fis2.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        try (
+            // 1. 創建與原始文件關聯的輸入流
+            FileInputStream fis = new FileInputStream("src/animal/zoo/1.JPG");
+            // 2. 創建與加密文件關聯的輸出流
+            FileOutputStream fos = new FileOutputStream("src/animal/zoo/ency.JPG")
+        ) {
+            int b;
+            while ((b = fis.read()) != -1) {
+            // 3. 對讀取到的數據進行加密處理（簡單異或）
+            b = b ^ 3;
+            // 4. 將加密後的數據寫入到加密文件中
+            fos.write(b);
             }
+            System.out.println("加密完成");
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
+}

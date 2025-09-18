@@ -24,6 +24,10 @@ public class FileInPutStream {
             // 3.釋放資源
                 // 細節1：每次使用完流之後都要釋放資源
 
+        public FileInPutStream(String string) {
+        //TODO Auto-generated constructor stub
+    }
+
         public static void main(String[] args) throws FileNotFoundException, IOException {
         // public int read()               一次讀一個字節
         // 1.創建對象
@@ -60,5 +64,14 @@ public class FileInPutStream {
         // 3.釋放資源
         fos.close();
         fis2.close();
+    }
+
+        public int read() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'read'");
+        }
+
+    public void close() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
