@@ -10,6 +10,7 @@ public class topic1_1 {
     public static int[] twoSum(int[] nums, int target) {
         // 1. 遍歷數組 i = 0
         for(int i = 0; i < nums.length; i++){
+            
             // 2. 遍歷數組 j = i的下一個
             for(int j = i + 1; j < nums.length; j++){
                 // 3. 如果 nums[i] + nums[j] = target
