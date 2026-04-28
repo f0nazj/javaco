@@ -1,63 +1,23 @@
 package animal.zoo;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.HashMap;
 
-public class Text3 {
-    /*
-    * FileInPutStream一次讀多個字節
-    * 方法名稱。                        說明
-    * public int read()               一次讀一個字節
-    * public int read(byte[] buffer)  一次讀一個字節數組數據
-    */
-    public static void main(String[] args) throws Exception {
-            // 1.創建對象
-            // fis2 的數據檔案為mp4格式
-            FileInputStream fis2 = null;
-            FileOutputStream fos = null;
-            try {
-                fis2 = new FileInputStream("/Users/f0nazj/Downloads/Sequence 01_1.mp4");
-                // fos 為要拷貝的檔案位置
-                fos = new FileOutputStream("src/animal/zoo/1.mp4");
-                // 2.讀取數據
-                byte[] buffer = new byte[1024 * 1024 * 5];
-                // 一次讀取多個字節數據, 具體讀多少, 跟數組的長度有關
-                // 返回值：本次讀取到了多少個字節數據
-                int len;
-                // 讀取數據的時候, 會返回-1, 代表讀取完畢
-                while((len = fis2.read(buffer)) != -1){
-                    // 寫入數據
-                    // fos.write(buffer, 0, len);  // 寫入的數據長度是len
-                    // 0代表從數組的第0個位置開始寫入
-                    fos.write(buffer, 0, len);
-                }
-                System.out.println("拷貝完畢");
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }finally {
-                // 3.釋放資源
-                if(fos != null){
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                if(fis2 != null){
-                    try {
-                        fis2.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+class Text3 {
+    public static void main(String[] args) {
+        int[] arr = {3, 5, 2, 8, 1};
+        int target = 10;
+        int[] result = twoSum(arr, target);
+        System.out.println(result[0] + ", " + result[1]);
     }
+    public static int[] twoSum(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if(map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
+            }
+            map.put(nums[i], i);
+        }
+        return null;
+    }
+}
