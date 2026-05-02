@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 public class GameJFrame extends JFrame {
+    public static GameJFrame instance = null;
     // 獲取介面的隱藏容器, 達到統一獲取, 後面就可以直接用了
     public static Container container = null;
     // 創建出牌的按鈕
@@ -53,6 +54,7 @@ public class GameJFrame extends JFrame {
     JTextField time[] = new JTextField[3];
 
     public GameJFrame() {
+        instance = this;
         // 設置任務欄的圖標(視窗左邊的LOGO)
         setIconImage(Toolkit.getDefaultToolkit().getImage("src/big/two/images/LOGO.png"));
         // 設置界面
@@ -145,11 +147,18 @@ public class GameJFrame extends JFrame {
 
     // 初始化牌(準備牌, 洗牌, 發牌, 排序)
     public void initCard() {
+        // 初始化 currentList（三個玩家各一個出牌區集合）
+        currentList.clear();
+        currentList.add(new ArrayList<>());
+        currentList.add(new ArrayList<>());
+        currentList.add(new ArrayList<>());
+
         // 準備牌
         // 把所有的牌加入到, pokerList中
         for (int i = 1; i <= 4; i++) {
             for (int j = 1; j <= 13; j++) {
                 Poker poker = new Poker(i + "-" + j, false);
+                poker.setLocation(new Point(360, 220));
                 pokerList.add(poker);
                 container.add(poker);
             }
@@ -165,9 +174,6 @@ public class GameJFrame extends JFrame {
         // 發牌
         for (int i = 0; i < pokerList.size(); i++) {
             Poker poker = pokerList.get(i);
-            if (i == pokerList.size()) {
-                lordList.add(poker);
-            }
             if (i % 3 == 0) {
                 Common.move(poker, poker.getLocation(), new Point(30, 60 + i * 6));
                 pleyer0.add(poker);
@@ -178,19 +184,28 @@ public class GameJFrame extends JFrame {
                 Common.move(poker, poker.getLocation(), new Point(750, 60 + i * 6));
                 pleyer2.add(poker);
             }
-            playerList.add(pleyer0);
-            playerList.add(pleyer1);
-            playerList.add(pleyer2);
-
             // 設置順序
             container.setComponentZOrder(poker, 0);
         }
+        playerList.add(pleyer0);
+        playerList.add(pleyer1);
+        playerList.add(pleyer2);
 
         // 排序
         for (int i = 0; i < 3; i++) {
             order(playerList.get(i));
             Common.rePosition(this, playerList.get(i), i);
         }
+
+        // 翻開自己的牌並允許點擊
+        for (Poker p : playerList.get(1)) {
+            p.turnFront();
+            p.setCanClick(true);
+        }
+
+        // 顯示出牌與Pass按鈕
+        outCardBut.setVisible(true);
+        passCardBut.setVisible(true);
     }
 
     public void order(ArrayList<Poker> list) {
@@ -230,7 +245,40 @@ public class GameJFrame extends JFrame {
     }
 
     public void outCard(ActionEvent e) {
-        System.out.println("出牌");
+        // 收集已選取（升起）的牌
+        ArrayList<Poker> selected = new ArrayList<>();
+        for (Poker p : playerList.get(1)) {
+            if (p.getClicked()) {
+                selected.add(p);
+            }
+        }
+        if (selected.isEmpty()) return;
+
+        // 隱藏上一次自己打出的牌
+        for (Poker p : currentList.get(1)) {
+            p.setVisible(false);
+        }
+        currentList.get(1).clear();
+
+        // 從手牌中移除選取的牌
+        playerList.get(1).removeAll(selected);
+
+        // 將牌放到桌面中央
+        int startX = 380 - selected.size() * 10;
+        for (int i = 0; i < selected.size(); i++) {
+            Poker p = selected.get(i);
+            p.setClicked(false);
+            p.setCanClick(false);
+            p.setLocation(new Point(startX + i * 21, 230));
+            container.setComponentZOrder(p, 0);
+            currentList.get(1).add(p);
+        }
+
+        // 重新排列剩餘手牌
+        if (!playerList.get(1).isEmpty()) {
+            Common.rePosition(this, playerList.get(1), 1);
+        }
+        container.repaint();
     }
 
     public void passCard(ActionEvent e) {

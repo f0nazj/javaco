@@ -1,5 +1,6 @@
 package big.two;
 
+import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,9 +45,11 @@ public class Poker extends JLabel implements MouseListener {
 
     // 顯示正面
     public void turnFront() {
-        // 給牌設置正面
-        this.setIcon(new ImageIcon("src/big/two/images/PokerCard/" + name + ".jpg"));
-        // 修改成員變量(up變成是指牌的正反面)
+        // 圖片命名為 rank-suit，但 name 格式為 suit-rank，需要對調
+        int dash = name.indexOf('-');
+        String suit = name.substring(0, dash);
+        String rank = name.substring(dash + 1);
+        this.setIcon(new ImageIcon("src/big/two/images/PokerCard/" + rank + "-" + suit + ".jpg"));
         this.up = true;
     }
 
@@ -60,57 +63,50 @@ public class Poker extends JLabel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-        // 判斷當前的牌是否可以被點擊
-        if (canClick) {
-            // 表示牌的位移像素
-            int step = 0;
-            // 判斷牌的狀態是升起還是放下
-            if (clicked) {
-                // 表是當前的牌已經被點擊
-                // 將牌往下推
-                step = 20;
-            } else {
-                // 表是當前的牌還沒有被點擊
-                // 將牌往上推
-                step = -20;
+        if (!canClick) return;
+
+        if (e.getClickCount() == 2) {
+            // 雙擊：確保牌已選取後直接出牌
+            if (!clicked) {
+                clicked = true;
+                Point from = this.getLocation();
+                this.setLocation(new Point(from.x, from.y - 20));
+                Container parent = getParent();
+                if (parent != null) {
+                    parent.setComponentZOrder(this, 0);
+                    parent.repaint();
+                }
             }
-            // 修改clicked變量記錄的值(把原本的值取反)
-            // 例如：原本是升起的狀態，就變成了放下的狀態
-            // 原本是放下的狀態，就變成了升起的狀態
+            if (GameJFrame.instance != null) {
+                GameJFrame.instance.outCard(null);
+            }
+        } else if (e.getClickCount() == 1) {
+            // 單擊：切換選取狀態
+            int step = clicked ? 20 : -20;
             clicked = !clicked;
-            // 修改一下牌的位置
             Point from = this.getLocation();
-            // 創建一個Point的對象, 表是結束的位置
-            Point to = new Point(from.x, from.y + step);
-            // 使牌動到新位置
-            this.setLocation(to);
+            this.setLocation(new Point(from.x, from.y + step));
+            if (clicked) {
+                Container parent = getParent();
+                if (parent != null) {
+                    parent.setComponentZOrder(this, 0);
+                    parent.repaint();
+                }
+            }
         }
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mousePressed'");
-    }
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseReleased'");
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseEntered'");
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'mouseExited'");
-    }
+    public void mouseExited(MouseEvent e) {}
 
     public String getName() {
         return name;
@@ -149,7 +145,7 @@ public class Poker extends JLabel implements MouseListener {
     }
 
     public void setLocation(Point location) {
-        this.location = location;
+        this.location = new Point(location.x, location.y);
+        super.setLocation(location.x, location.y);
     }
-
 }

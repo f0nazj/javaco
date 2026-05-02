@@ -1,13 +1,14 @@
 package animal.zoo;
 
-import java.util.Arrays;
-
 public class Text {
     public static void main(String[] args) {
-        int[] arr = {3, 7, 1, 9, 4};
-        Arrays.sort(arr);
+        System.out.println(multiply(5));
+    }
 
-        int index = Arrays.binarySearch(arr, 9);
-        System.out.println(index);
+    public static int multiply(int n) {
+        if (n == 1){
+            return 1; // 終止條件
+        }
+        return n * multiply(n - 1); // 呼叫自己
     }
 }
