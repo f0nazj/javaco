@@ -11,6 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * 註冊視窗。
+ * 負責新增使用者資料，並檢查欄位是否為空、密碼是否一致與帳號是否重複。
+ */
 public class RegisterJFrame extends JFrame implements ActionListener {
     ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("/gui/ui/images/background/login_background.jpg"));
 
@@ -99,7 +103,7 @@ public class RegisterJFrame extends JFrame implements ActionListener {
             LoginJFrame.list.add(new User(user, pwd));
             showDialog("註冊成功！請返回登入");
         } else if (obj == backBtn) {
-            this.setVisible(false);
+            this.dispose();
             new LoginJFrame();
         }
     }

@@ -1,5 +1,8 @@
 package gui.ui.itheima;
 
+/**
+ * 使用者資料類別，保存帳號名稱與密碼。
+ */
 public class User {
     private String name;
     private String password;

@@ -14,6 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * 登入視窗。
+ * 負責帳號密碼驗證、驗證碼檢查，以及切換到註冊或遊戲畫面。
+ */
 public class LoginJFrame extends JFrame implements ActionListener {
     static ArrayList<User> list = new ArrayList<>();
     static {
@@ -82,7 +86,8 @@ public class LoginJFrame extends JFrame implements ActionListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("更換驗證碼");
-                verJLabel2.setText(verification());  // 更新 JLabel 显示的验证码
+                code = verification();
+                verJLabel2.setText(code);  // 更新 JLabel 显示的验证码
             }
         });
 
@@ -140,14 +145,14 @@ public class LoginJFrame extends JFrame implements ActionListener {
 
             if (validUser) {
                 System.out.println("登錄成功");
-                this.setVisible(false);
+                this.dispose();
                 new GameJFrame();
             } else {
                 showJDialog("登錄失敗, 用戶名或密碼輸入錯誤");
             }
         } else if (obj == register) {
             System.out.println("註冊");
-            this.setVisible(false);
+            this.dispose();
             new RegisterJFrame();
         }
     }
