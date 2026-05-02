@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,7 +15,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class LoginJFrame extends JFrame implements ActionListener {
-    static final ArrayList<User> list = new ArrayList<>();
+    static ArrayList<User> list = new ArrayList<>();
     static {
         list.add(new User("f0nazj","123"));
         list.add(new User("admin","123"));
@@ -146,7 +147,8 @@ public class LoginJFrame extends JFrame implements ActionListener {
             }
         } else if (obj == register) {
             System.out.println("註冊");
-            // 此處添加註冊的邏輯
+            this.setVisible(false);
+            new RegisterJFrame();
         }
     }
     public void showJDialog(String content) {
