@@ -1,0 +1,125 @@
+name: Package BigTwo
+
+on:
+  push:
+    branches:
+      - main
+      - "claude/**"
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    name: Build macOS DMG
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build DMG
+        run: |
+          chmod +x build-mac.sh
+          ./build-mac.sh
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BigTwo-macOS
+          path: build/package/*.dmg
+
+  windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Compile and package Windows app image
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $project = (Get-Location).Path
+          $src = Join-Path $project "src"
+          $build = Join-Path $project "build"
+          $classes = Join-Path $build "classes"
+          $dist = Join-Path $build "dist"
+          $package = Join-Path $build "package"
+
+          if (Test-Path $build) {
+            Remove-Item $build -Recurse -Force
+          }
+          New-Item -ItemType Directory -Force -Path $classes, $dist, $package | Out-Null
+
+          Get-ChildItem "$src\big\two" -Recurse -Filter "*.java" |
+            ForEach-Object { $_.FullName } |
+            Set-Content "$build\sources.txt" -Encoding UTF8
+
+          javac -encoding UTF-8 -d $classes "@$build\sources.txt"
+
+          Copy-Item "$src\big\two\images" "$classes\big\two\images" -Recurse
+
+          @"
+          Manifest-Version: 1.0
+          Main-Class: big.two.Test
+          "@ | Set-Content "$build\MANIFEST.MF" -Encoding ASCII
+
+          jar cfm "$dist\BigTwo.jar" "$build\MANIFEST.MF" -C $classes .
+
+          jpackage `
+            --input       $dist `
+            --dest        $package `
+            --name        "BigTwo" `
+            --main-jar    "BigTwo.jar" `
+            --main-class  "big.two.Test" `
+            --type        app-image `
+            --app-version "1.0" `
+            --vendor      "Student Project" `
+            --win-console
+
+          Compress-Archive -Path "$package\BigTwo" -DestinationPath "$package\BigTwo-windows.zip"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BigTwo-Windows
+          path: build/package/BigTwo-windows.zip
+
+  release:
+    name: Publish GitHub Release
+    needs:
+      - macos
+      - windows
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download packaged apps
+        uses: actions/download-artifact@v4
+        with:
+          path: release-files
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          generate_release_notes: true
