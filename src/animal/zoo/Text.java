@@ -1,14 +1,14 @@
 package animal.zoo;
 
+import tool.coding.ListNode;
+
 public class Text {
     public static void main(String[] args) {
-        System.out.println(multiply(5));
-    }
+        ListNode current = head;
 
-    public static int multiply(int n) {
-        if (n == 1){
-            return 1; // 終止條件
+        while (current != null) {
+            System.out.println(current.val);
+            current = current.next;
         }
-        return n * multiply(n - 1); // 呼叫自己
     }
 }
