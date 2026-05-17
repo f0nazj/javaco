@@ -1,23 +1,40 @@
 package animal.zoo;
 
-import java.util.HashMap;
+public class Text3 {
 
-class Text3 {
     public static void main(String[] args) {
-        int[] arr = {3, 5, 2, 8, 1};
-        int target = 10;
-        int[] result = twoSum(arr, target);
-        System.out.println(result[0] + ", " + result[1]);
+
+        // 使用不同付款方式
+        checkout(new LinePay());
+
+        checkout(new CashPay());
     }
-    public static int[] twoSum(int[] nums, int target) {
-        HashMap<Integer, Integer> map = new HashMap<>();
-        for(int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-            if(map.containsKey(complement)) {
-                return new int[]{map.get(complement), i};
-            }
-            map.put(nums[i], i);
+
+    // 統一結帳方法
+    public static void checkout(Payment payment) {
+        payment.pay(500);
+    }
+
+    // 付款規則
+    interface Payment {
+        void pay(int money);
+    }
+
+    // LinePay
+    static class LinePay implements Payment {
+
+        @Override
+        public void pay(int money) {
+            System.out.println("LinePay支付了 " + money + " 元");
         }
-        return null;
+    }
+
+    // 現金支付
+    static class CashPay implements Payment {
+
+        @Override
+        public void pay(int money) {
+            System.out.println("CashPay支付了 " + money + " 元");
+        }
     }
 }
